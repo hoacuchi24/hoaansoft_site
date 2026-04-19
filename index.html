@@ -1,11 +1,393 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HoaAn-EduTool — Hệ thống giải pháp hỗ trợ nhà trường</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root {
+    --bg: #F8FAFC;
+    --surface: #FFFFFF;
+    --surface2: #F1F5F9;
+    --border: #E2E8F0;
+    --text: #1E293B;
+    --text-dim: #64748B;
+    --accent: #2563EB;
+    --accent-glow: #2563EB18;
+    --amber: #D97706;
+    --green: #059669;
+    --purple: #7C3AED;
+    --font: 'Be Vietnam Pro', sans-serif;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: var(--font); background: var(--bg); color: var(--text); overflow-x: hidden; }
+
+/* ── BACKGROUND ── */
+.bg-grid {
+    position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.5;
+    background-image:
+        linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+    background-size: 60px 60px;
+}
+.bg-glow {
+    position: fixed; width: 800px; height: 800px; border-radius: 50%;
+    filter: blur(160px); opacity: 0.12; pointer-events: none; z-index: 0;
+}
+.bg-glow-1 { background: #93C5FD; top: -300px; left: 50%; transform: translateX(-50%); }
+.bg-glow-2 { background: #C4B5FD; bottom: -400px; right: -200px; }
+
+.container { position: relative; z-index: 1; max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+
+/* ══════════ NAV ══════════ */
+nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: rgba(248, 250, 252, 0.85); backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+}
+.nav-inner {
+    max-width: 1080px; margin: 0 auto; padding: 0 24px;
+    display: flex; align-items: center; justify-content: space-between; height: 64px;
+}
+.nav-brand {
+    display: flex; align-items: center; gap: 10px;
+    font-size: 18px; font-weight: 800; text-decoration: none; color: var(--text);
+}
+.nav-brand-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: linear-gradient(135deg, var(--accent), var(--purple));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 16px;
+}
+.nav-links { display: flex; gap: 32px; }
+.nav-links a {
+    color: var(--text-dim); text-decoration: none; font-size: 14px;
+    font-weight: 500; transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--accent); }
+
+/* ══════════ HERO ══════════ */
+.hero {
+    min-height: 100vh; display: flex; flex-direction: column;
+    justify-content: center; align-items: center; text-align: center;
+    padding: 120px 24px 80px;
+}
+.hero-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: 100px; padding: 6px 20px 6px 10px;
+    font-size: 13px; color: var(--text-dim); font-weight: 500;
+    margin-bottom: 36px; animation: fadeUp 0.7s ease both;
+}
+.hero-badge-dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--green); box-shadow: 0 0 8px var(--green);
+    animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+.hero h1 {
+    font-size: clamp(36px, 6vw, 64px); font-weight: 900;
+    line-height: 1.1; letter-spacing: -2px; margin-bottom: 24px;
+    animation: fadeUp 0.7s 0.1s ease both;
+}
+.hero h1 .grad {
+    background: linear-gradient(135deg, var(--accent), var(--purple), var(--accent));
+    background-size: 200% auto;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: shimmer 4s linear infinite;
+}
+@keyframes shimmer { to { background-position: 200% center; } }
+
+.hero-desc {
+    font-size: clamp(15px, 2vw, 18px); color: var(--text-dim);
+    max-width: 620px; line-height: 1.8; margin-bottom: 48px;
+    animation: fadeUp 0.7s 0.2s ease both;
+}
+.hero-cta {
+    display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;
+    animation: fadeUp 0.7s 0.3s ease both;
+}
+.btn {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 14px 28px; border-radius: 12px; font-size: 15px;
+    font-weight: 700; font-family: var(--font);
+    text-decoration: none; border: none; cursor: pointer;
+    transition: all 0.3s ease;
+}
+.btn-primary {
+    background: linear-gradient(135deg, var(--accent), #2563EB);
+    color: #fff; box-shadow: 0 4px 24px var(--accent-glow);
+}
+.btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 40px var(--accent-glow); }
+.btn-ghost {
+    background: transparent; color: var(--text-dim);
+    border: 1px solid var(--border);
+}
+.btn-ghost:hover { border-color: var(--accent); color: var(--text); }
+
+/* ── Scroll line ── */
+.scroll-hint {
+    margin-top: 64px; animation: fadeUp 0.7s 0.5s ease both;
+    display: flex; flex-direction: column; align-items: center; gap: 8px;
+}
+.scroll-hint span { font-size: 11px; text-transform: uppercase; letter-spacing: 3px; color: var(--text-dim); }
+.scroll-hint-line {
+    width: 1px; height: 48px;
+    background: linear-gradient(to bottom, var(--accent), transparent);
+    animation: scrollAnim 2s infinite;
+}
+@keyframes scrollAnim { 0%{opacity:.3;transform:scaleY(.5)} 50%{opacity:1;transform:scaleY(1)} 100%{opacity:.3;transform:scaleY(.5)} }
+
+/* ══════════ STATS BAR ══════════ */
+.stats-bar {
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px;
+    background: var(--border); border-radius: 16px; overflow: hidden;
+    margin-bottom: 100px;
+}
+.stat-item {
+    background: var(--surface); padding: 32px; text-align: center;
+}
+.stat-num { font-size: 36px; font-weight: 900; color: var(--accent); margin-bottom: 4px; }
+.stat-label { font-size: 13px; color: var(--text-dim); }
+
+/* ══════════ PROJECTS SECTION ══════════ */
+.section-header {
+    margin-bottom: 56px;
+}
+.section-tag {
+    font-size: 12px; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 4px; color: var(--accent); margin-bottom: 14px;
+}
+.section-title {
+    font-size: clamp(26px, 4vw, 40px); font-weight: 800;
+    line-height: 1.2; letter-spacing: -1px; margin-bottom: 14px;
+}
+.section-desc { font-size: 16px; color: var(--text-dim); max-width: 560px; }
+
+/* ── Project Cards ── */
+.projects-grid {
+    display: grid; grid-template-columns: 1fr; gap: 24px;
+    margin-bottom: 120px;
+}
+.project-card {
+    display: grid; grid-template-columns: auto 1fr auto;
+    align-items: center; gap: 28px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 20px; padding: 36px;
+    transition: all 0.4s cubic-bezier(0.4,0,0.2,1);
+    text-decoration: none; color: inherit;
+    position: relative; overflow: hidden;
+}
+.project-card::after {
+    content: ''; position: absolute; inset: 0; border-radius: 20px;
+    background: linear-gradient(135deg, transparent, rgba(59,130,246,0.03));
+    opacity: 0; transition: opacity 0.4s;
+}
+.project-card:hover {
+    border-color: var(--accent); transform: translateY(-4px);
+    box-shadow: 0 12px 48px rgba(59,130,246,0.08);
+}
+.project-card:hover::after { opacity: 1; }
+
+.project-icon {
+    width: 64px; height: 64px; border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px; flex-shrink: 0;
+}
+.pi-amber  { background: #F59E0B18; border: 1px solid #F59E0B30; }
+.pi-blue   { background: #3B82F618; border: 1px solid #3B82F630; }
+.pi-purple { background: #8B5CF618; border: 1px solid #8B5CF630; }
+
+.project-info h3 { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+.project-info p { font-size: 14px; color: var(--text-dim); line-height: 1.7; }
+
+.project-status {
+    flex-shrink: 0; padding: 6px 16px; border-radius: 100px;
+    font-size: 12px; font-weight: 600;
+}
+.status-live { background: #10B98118; color: var(--green); border: 1px solid #10B98130; }
+.status-coming { background: #8B5CF618; color: var(--purple); border: 1px solid #8B5CF630; }
+
+.project-arrow {
+    position: absolute; right: 36px; top: 50%; transform: translateY(-50%);
+    color: var(--text-dim); opacity: 0; transition: all 0.3s;
+    font-size: 20px;
+}
+.project-card:hover .project-arrow { opacity: 1; right: 28px; color: var(--accent); }
+
+/* ── Tags row ── */
+.project-tags { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+.tag {
+    font-size: 11px; padding: 3px 10px; border-radius: 6px;
+    background: var(--surface2); color: var(--text-dim); border: 1px solid var(--border);
+}
+
+/* ══════════ FOOTER ══════════ */
+footer {
+    border-top: 1px solid var(--border); padding: 36px 0;
+    text-align: center; font-size: 13px; color: var(--text-dim);
+}
+
+/* ══════════ ANIMATIONS ══════════ */
+@keyframes fadeUp { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:translateY(0)} }
+.reveal { opacity:0; transform:translateY(30px); transition: all 0.7s cubic-bezier(0.4,0,0.2,1); }
+.reveal.visible { opacity:1; transform:translateY(0); }
+
+/* ══════════ RESPONSIVE ══════════ */
+@media (max-width: 768px) {
+    .project-card { grid-template-columns: 1fr; gap: 16px; padding: 24px; }
+    .project-icon { width: 48px; height: 48px; font-size: 22px; }
+    .project-status { align-self: start; }
+    .project-arrow { display: none; }
+    .stats-bar { grid-template-columns: 1fr; }
+    .nav-links { display: none; }
+    .hero { padding: 100px 16px 60px; }
+}
+</style>
 </head>
 <body>
-    
+
+<div class="bg-grid"></div>
+<div class="bg-glow bg-glow-1"></div>
+<div class="bg-glow bg-glow-2"></div>
+
+<!-- ══════════ NAV ══════════ -->
+
+
+<!-- ══════════ HERO ══════════ -->
+<header class="hero">
+    <div class="hero-badge"><span class="hero-badge-dot"></span> Tiện ích cho nhà trường</div>
+    <h1>Hệ thống giải pháp<br><span class="grad">hỗ trợ nhà trường</span></h1>
+    <p class="hero-desc">Bộ công cụ phần mềm chuyên biệt dành cho giáo viên Tin và nhân viên trường học — tự động hoá quy trình, giảm sai sót, tiết kiệm thời gian.</p>
+    <div class="hero-cta">
+        <a href="#projects" class="btn btn-primary">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+            Xem các giải pháp
+        </a>
+        <a href="#about" class="btn btn-ghost">Tìm hiểu thêm</a>
+    </div>
+    <div class="scroll-hint">
+        <span>Cuộn xuống</span>
+        <div class="scroll-hint-line"></div>
+    </div>
+</header>
+
+
+
+<!-- ══════════ PROJECTS ══════════ -->
+<section id="projects">
+    <div class="container">
+        <div class="section-header reveal">
+            <div class="section-tag">Giải pháp</div>
+            <div class="section-title">Các ứng dụng hiện có</div>
+            <p class="section-desc">Mỗi ứng dụng giải quyết một bài toán cụ thể trong công tác quản lý trường học, được thiết kế đơn giản và dễ sử dụng.</p>
+        </div>
+
+        <div class="projects-grid">
+
+            <!-- ── Card 1: Manager Activity Student ── -->
+            <a href="https://sites.google.com/view/hoaansoft/manager-activitiy-student" class="project-card reveal">
+                <div class="project-icon pi-blue">📋</div>
+                <div class="project-info">
+                    <h3>Manager Activity Student</h3>
+                    <p>Quản lý và theo dõi hoạt động học sinh — hỗ trợ giáo viên Tin học, cán bộ quản lý nắm bắt tình hình học tập, rèn luyện của học sinh. Hệ thống tích hợp chế độ phục vụ thi trên máy tính.</p>
+                    <div class="project-tags">
+                        <span class="tag">Quản lý hoạt động</span>
+                        <span class="tag">Học sinh</span>
+                        <span class="tag">Đang phát triển</span>
+                    </div>
+                </div>
+                <div class="project-status status-coming">◌ Đang phát triển</div>
+                <span class="project-arrow">→</span>
+            </a>
+
+            <!-- ── Card 2: CheckData ── -->
+            <a href="https://sites.google.com/view/hoaansoft/checkdata-csdl-hcm" class="project-card reveal">
+                <div class="project-icon pi-amber">📊</div>
+                <div class="project-info">
+                    <h3>App Check Data CSDL HCM</h3>
+                    <p>Kiểm tra dữ liệu học sinh từ file Excel — phát hiện ô trống, giá trị sai, tạo báo cáo thống kê thiếu dữ liệu theo từng lớp.</p>
+                    <div class="project-tags">
+                        <span class="tag">Kiểm tra dữ liệu</span>
+                        <span class="tag">Excel</span>
+                        <span class="tag">CSDL</span>
+                        <span class="tag">Windows</span>
+                    </div>
+                </div>
+                <div class="project-status status-live">● Hoạt động</div>
+                <span class="project-arrow">→</span>
+            </a>
+
+            <!-- ── Card 3: MyMetrix Mos ── -->
+            <a href="https://sites.google.com/view/hoaansoft/mymetrix-mos" class="project-card reveal">
+                <div class="project-icon pi-purple">📐</div>
+                <div class="project-info">
+                    <h3>MyMetrix Mos</h3>
+                    <p>Công cụ hỗ trợ mô phỏng dạng bài ôn tập thi Tin hoc Mos — đang trong giai đoạn phát triển.</p>
+                    <div class="project-tags">
+                        <span class="tag">Đo lường</span>
+                        <span class="tag">Đánh giá</span>
+                        <span class="tag">Đang phát triển</span>
+                    </div>
+                </div>
+                <div class="project-status status-coming">◌ Đang phát triển</div>
+                <span class="project-arrow">→</span>
+            </a>
+
+        </div>
+    </div>
+</section>
+
+<!-- ══════════ ABOUT ══════════ -->
+<section id="about" style="padding-bottom: 120px;">
+    <div class="container">
+        <div class="section-header reveal">
+            <div class="section-tag">Về hệ thống</div>
+            <div class="section-title">Tại sao chọn HoaAn-EduTool?</div>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 20px;">
+            <div class="reveal" style="background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:28px;">
+                <div style="font-size:28px; margin-bottom:14px;">⚡</div>
+                <h4 style="font-size:16px; font-weight:700; margin-bottom:8px;">Đơn giản, nhanh gọn</h4>
+                <p style="font-size:14px; color:var(--text-dim); line-height:1.7;">Giao diện trực quan, không cần đào tạo. Chạy trực tiếp trên Windows mà không cần cài thêm phần mềm phụ.</p>
+            </div>
+            <div class="reveal" style="background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:28px;">
+                <div style="font-size:28px; margin-bottom:14px;">🎯</div>
+                <h4 style="font-size:16px; font-weight:700; margin-bottom:8px;">Chính xác, tin cậy</h4>
+                <p style="font-size:14px; color:var(--text-dim); line-height:1.7;">Xử lý dữ liệu tự động với các quy tắc nghiệp vụ cụ thể cho ngành giáo dục Việt Nam.</p>
+            </div>
+            <div class="reveal" style="background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:28px;">
+                <div style="font-size:28px; margin-bottom:14px;">💰</div>
+                
+                <p style="font-size:14px; color:var(--text-dim); line-height:1.7;">Tất cả ứng dụng đượctạo ra với tâm nguyện hỗ trợ cộng đồng giáo dục.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<footer>
+    <div class="container"><h3>HoaAn-EduTool — Hệ thống giải pháp hỗ trợ nhà trường</h3>
+        <p>Tác giả: Phan phú hòa </p>
+        <p>GV: Tin học trường THPT Tân Thông Hội</p>
+        <p>Email: hoacuchi24@gmail.com</p>
+    </div>
+</footer>
+
+<script>
+const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+document.querySelectorAll('a[href^="#"]').forEach(a => {
+    a.addEventListener('click', e => {
+        e.preventDefault();
+        document.querySelector(a.getAttribute('href'))?.scrollIntoView({ behavior: 'smooth' });
+    });
+});
+</script>
 </body>
 </html>
